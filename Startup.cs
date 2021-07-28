@@ -5,10 +5,13 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Test.Logging;
 
 namespace Test
 {
@@ -34,8 +37,11 @@ namespace Test
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
+            loggerFactory.AddFile(Path.Combine(Directory.GetCurrentDirectory(), "logger.txt"));
+            var logger = loggerFactory.CreateLogger("FileLogger");
+
             app.Use(async (context, next) =>
             {
                 context.Items["text"] = "Text from HttpContext.Items";
@@ -75,7 +81,9 @@ namespace Test
                     context.Session.Set<Person>("person", person);
                     result += " ; There no person in the session.";
                 }
-                    await context.Response.WriteAsync(result);
+
+                logger.LogInformation("Processing request {0}", context.Request.Path);
+                await context.Response.WriteAsync(result);
 
             });
         }
