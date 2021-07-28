@@ -19,7 +19,7 @@ namespace Test
 
         public async Task InvokeAsync(HttpContext context)
         {
-            StringBuilder stringBuilder = new StringBuilder();
+            /*StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append($"<p>Name: {Person?.Name}</p>");
             stringBuilder.Append($"<p>Age: {Person?.Age}</p>");
             stringBuilder.Append($"<p>Company: {Person?.Company?.Title}</p>");
@@ -28,7 +28,7 @@ namespace Test
                 stringBuilder.Append($"<li>{lang}</li>");
             stringBuilder.Append("</ul>");
 
-            await context.Response.WriteAsync(stringBuilder.ToString());
+            await context.Response.WriteAsync(stringBuilder.ToString());*/
         }
     }
 }
