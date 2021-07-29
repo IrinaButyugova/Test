@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -12,6 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Test.Logging;
+using Test.Routing;
 
 namespace Test
 {
@@ -27,13 +29,14 @@ namespace Test
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDistributedMemoryCache();
-            services.AddSession(options =>
+            services.AddDistributedMemoryCache()
+            .AddSession(options =>
             {
                 options.Cookie.Name = ".MyApp.Session";
                 options.IdleTimeout = TimeSpan.FromSeconds(3600);
                 options.Cookie.IsEssential = true;
-            });
+            })
+            .AddRouting();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,6 +44,22 @@ namespace Test
         {
             loggerFactory.AddFile(Path.Combine(Directory.GetCurrentDirectory(), "logger.txt"));
             var logger = loggerFactory.CreateLogger("FileLogger");
+
+            var myRouteHandler = new RouteHandler(HandleAsync);
+            var routeBuilder = new RouteBuilder(app, myRouteHandler);
+            routeBuilder.Routes.Add(new AdminRoute());
+            routeBuilder.MapRoute("{controller}/{action}",
+               async context =>
+               {
+                   context.Response.ContentType = "text/html;charset=utf-8";
+                   await context.Response.WriteAsync("двухсегментный запрос");
+               });
+            routeBuilder.MapRoute("default",
+            "{controller}/{action}/{id?}",
+            null,
+            new { myConstraint = new CustomConstraint("/Home/Index/12") });
+
+            app.UseRouter(routeBuilder.Build());
 
             app.Use(async (context, next) =>
             {
@@ -86,6 +105,15 @@ namespace Test
                 await context.Response.WriteAsync(result);
 
             });
+        }
+
+        private async Task HandleAsync(HttpContext context)
+        {
+            var routeValues = context.GetRouteData().Values;
+            var action = routeValues["action"].ToString();
+            var controller = routeValues["controller"].ToString();
+            string id = routeValues["id"]?.ToString();
+            await context.Response.WriteAsync($"controller: {controller} | action: {action} | id: {id}");
         }
     }
 }
