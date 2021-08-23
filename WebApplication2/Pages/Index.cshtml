@@ -1,10 +1,45 @@
 ﻿@page
-@model IndexModel
+@model WebApplication2.Models.Phone
+@using WebApplication2.Controllers
 @{
     ViewData["Title"] = "Home page";
 }
+<script asp-src-include="~/js/**/*.js" asp-src-exclude="~/js/util/**/*.js"></script>
+<link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/4.3.0/css/bootstrap.min.css"
+      asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+      asp-fallback-test-class="hidden" asp-fallback-test-property="visibility" asp-fallback-test-value="hidden" />
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    @Html.ActionLink("О сайте", "About", "Home")
+    <a href='@Url.Action("About", "Home")'>О сайте</a>
+    <a asp-controller="Home" asp-action="About">О сайте</a>
+    <a asp-controller="Home" asp-action="About" asp-route-area="">О сайте</a>
+    <a asp-controller="Home" asp-action="About" asp-host="localhost.com" asp-protocol="https">О сайте</a>
+
+
+
+    <h2>Добавление телефона</h2>
+
+    <form asp-action="Create" asp-controller="Home" asp-antiforgery="true">
+        <div>
+            <div>
+                <label asp-for="Name"></label>
+                <input type="text" asp-for="Name" />
+            </div>
+            <div>
+                <label asp-for="Price"></label>
+                <input asp-for="Price" />
+            </div>
+            <div>
+                <label asp-for="Company.Id"></label>
+                <select asp-for="Company.Id" asp-items="ViewBag.Companies"></select>
+            </div>
+            <div>
+                <input type="submit" value="Save" />
+            </div>
+        </div>
+    </form>
+
 </div>
