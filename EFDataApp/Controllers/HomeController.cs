@@ -59,7 +59,13 @@ namespace EFDataApp.Controllers
                 SortState.CompanyDesc => users.OrderByDescending(s => s.Company.Name),
                 _ => users.OrderBy(s => s.Name),
             };
-            return View(await users.AsNoTracking().ToListAsync());
+
+            IndexViewModel viewModel = new IndexViewModel
+            {
+                Users = await users.AsNoTracking().ToListAsync(),
+                SortViewModel = new SortViewModel(sortOrder)
+            };
+            return View(viewModel);
         }
 
         public IActionResult Privacy()
