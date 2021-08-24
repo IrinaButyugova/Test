@@ -9,5 +9,6 @@ namespace EFDataApp.Models
         public SortViewModel SortViewModel { get; set; }
         public SelectList Companies { get; set; }
         public string Name { get; set; }
+        public PageViewModel PageViewModel { get; set; }
     }
 }
