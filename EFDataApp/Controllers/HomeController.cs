@@ -1,5 +1,6 @@
 ﻿using EFDataApp.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -42,9 +43,17 @@ namespace EFDataApp.Controllers
             }
         }
 
-        public async Task<IActionResult> Index(SortState sortOrder = SortState.NameAsc)
+        public async Task<IActionResult> Index(int? company, string name, SortState sortOrder = SortState.NameAsc)
         {
             IQueryable<User> users = _db.Users.Include(x => x.Company);
+            if (company != null && company != 0)
+            {
+                users = users.Where(p => p.CompanyId == company);
+            }
+            if (!String.IsNullOrEmpty(name))
+            {
+                users = users.Where(p => p.Name.Contains(name));
+            }
 
             ViewData["NameSort"] = sortOrder == SortState.NameAsc ? SortState.NameDesc : SortState.NameAsc;
             ViewData["AgeSort"] = sortOrder == SortState.AgeAsc ? SortState.AgeDesc : SortState.AgeAsc;
@@ -60,10 +69,15 @@ namespace EFDataApp.Controllers
                 _ => users.OrderBy(s => s.Name),
             };
 
+            List<Company> companies = _db.Companies.ToList();
+            companies.Insert(0, new Company { Name = "Все", Id = 0 });
+
             IndexViewModel viewModel = new IndexViewModel
             {
                 Users = await users.AsNoTracking().ToListAsync(),
-                SortViewModel = new SortViewModel(sortOrder)
+                SortViewModel = new SortViewModel(sortOrder),
+                Companies = new SelectList(companies, "Id", "Name"),
+                Name = name
             };
             return View(viewModel);
         }

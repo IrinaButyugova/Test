@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace EFDataApp.Models
 {
@@ -9,5 +7,7 @@ namespace EFDataApp.Models
     {
         public IEnumerable<User> Users { get; set; }
         public SortViewModel SortViewModel { get; set; }
+        public SelectList Companies { get; set; }
+        public string Name { get; set; }
     }
 }
