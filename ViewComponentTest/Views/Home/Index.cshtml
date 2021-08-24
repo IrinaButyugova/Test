@@ -1,8 +1,43 @@
-﻿@{
+﻿@using ViewComponentTest.Models
+@{
+    User tom = new User { Name = "Tom", Age = 35 };
+    User alice = new User { Name = "Alice", Age = 29 };
+}
+@{
     ViewData["Title"] = "Home Page";
 }
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+    <p>
+        24 часовой формат с секундами: <br />
+        @await Component.InvokeAsync("Timer", new { includeSeconds = true, format24 = true })
+    </p>
+
+    <p>
+        12 часовой формат без секунд: <br />
+        <vc:timer include-seconds="false" format24="false"></vc:timer>
+    </p>
+    <p>
+        24 часовой формат без секунд: <br />
+        <vc:timer include-seconds="false" format24="true"></vc:timer>
+    </p>
 </div>
+<div>
+    @await Component.InvokeAsync("Person", new { user = tom })
+</div>
+<div>
+    <vc:person user="alice"></vc:person>
+</div>
+<div>
+    @await Component.InvokeAsync("TimerDepInj")
+</div>
+<div>
+    @await Component.InvokeAsync("UsersList")
+</div>
+<div>
+    <vc:users-list />
+</div>
+@await Component.InvokeAsync("Header")
