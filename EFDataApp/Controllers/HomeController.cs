@@ -43,10 +43,9 @@ namespace EFDataApp.Controllers
             }
         }
 
-        public async Task<IActionResult> Index(int? company, string name, int page = 1, SortState sortOrder = SortState.NameAsc)
+        public async Task<IActionResult> Index(int? company, string name, int page = 1, 
+            SortState sortOrder = SortState.NameAsc)
         {
-            int pageSize = 3;
-
             IQueryable<User> users = _db.Users.Include(x => x.Company);
             if (company != null && company != 0)
             {
@@ -56,14 +55,6 @@ namespace EFDataApp.Controllers
             {
                 users = users.Where(p => p.Name.Contains(name));
             }
-
-            var count = await users.CountAsync();
-            var items = await users.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
-            PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
-
-            ViewData["NameSort"] = sortOrder == SortState.NameAsc ? SortState.NameDesc : SortState.NameAsc;
-            ViewData["AgeSort"] = sortOrder == SortState.AgeAsc ? SortState.AgeDesc : SortState.AgeAsc;
-            ViewData["CompSort"] = sortOrder == SortState.CompanyAsc ? SortState.CompanyDesc : SortState.CompanyAsc;
 
             users = sortOrder switch
             {
@@ -75,16 +66,16 @@ namespace EFDataApp.Controllers
                 _ => users.OrderBy(s => s.Name),
             };
 
-            List<Company> companies = _db.Companies.ToList();
-            companies.Insert(0, new Company { Name = "Все", Id = 0 });
+            int pageSize = 3;
+            var count = await users.CountAsync();
+            var items = await users.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
 
             IndexViewModel viewModel = new IndexViewModel
             {
-                Users = items,
+                PageViewModel = new PageViewModel(count, page, pageSize),
                 SortViewModel = new SortViewModel(sortOrder),
-                Companies = new SelectList(companies, "Id", "Name"),
-                Name = name,
-                PageViewModel = pageViewModel
+                FilterViewModel = new FilterViewModel(_db.Companies.ToList(), company, name),
+                Users = items
             };
             return View(viewModel);
         }

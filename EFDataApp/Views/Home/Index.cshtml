@@ -1,7 +1,10 @@
-﻿@model IndexViewModel
+﻿@using EFDataApp.Models
+@model IndexViewModel
 @{
     ViewBag.Title = "Все пользователи";
 }
+@addTagHelper *, EFDataApp
+
 <style>
     @@font-face {
         font-family: 'FontAwesome';
@@ -32,10 +35,10 @@
 <form method="get">
     <div class="form-inline form-group">
         <label class="control-label">Имя: </label>
-        <input name="name" class="form-control" />
+        <input name="@Model.FilterViewModel.SelectedName" class="form-control" />
 
         <label class="control-label">Компания: </label>
-        <select name="company" asp-items="@Model.Companies" class="form-control"></select>
+        <select name="company" asp-items="@Model.FilterViewModel.Companies" class="form-control"></select>
 
         <input type="submit" value="Фильтр" class="btn btn-default" />
 
@@ -45,19 +48,28 @@
             <tr>
                 <th>
                     <sort-header action="Index" up="@Model.SortViewModel.Up"
-                                 current="@Model.SortViewModel.Current" property="@Model.SortViewModel.NameSort">
+                                 current="@Model.SortViewModel.Current" property="@Model.SortViewModel.NameSort"
+                                 page-url-name="@(Model.FilterViewModel.SelectedName)"
+                                 page-url-company="@(Model.FilterViewModel.SelectedCompany)"
+                                 page-url-sortorder="@(Model.SortViewModel.Current)">
                         Имя
                     </sort-header>
                 </th>
                 <th>
                     <sort-header action="Index" up="@Model.SortViewModel.Up"
-                                 current="@Model.SortViewModel.Current" property="@Model.SortViewModel.AgeSort">
+                                 current="@Model.SortViewModel.Current" property="@Model.SortViewModel.AgeSort"
+                                 page-url-name="@(Model.FilterViewModel.SelectedName)"
+                                 page-url-company="@(Model.FilterViewModel.SelectedCompany)"
+                                 page-url-sortorder="@(Model.SortViewModel.Current)">
                         Возраст
                     </sort-header>
                 </th>
                 <th>
                     <sort-header action="Index" up="@Model.SortViewModel.Up"
-                                 current="@Model.SortViewModel.Current" property="@Model.SortViewModel.CompanySort">
+                                 current="@Model.SortViewModel.Current" property="@Model.SortViewModel.CompanySort"
+                                 page-url-name="@(Model.FilterViewModel.SelectedName)"
+                                 page-url-company="@(Model.FilterViewModel.SelectedCompany)"
+                                 page-url-sortorder="@(Model.SortViewModel.Current)">
                         Компания
                     </sort-header>
                 </th>
@@ -79,21 +91,7 @@
     </div>
 </form>
 
-@if (Model.PageViewModel.HasPreviousPage)
-{
-    <a asp-action="Index"
-       asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
-       class="btn btn-outline-dark">
-        <i class="glyphicon glyphicon-chevron-left"></i>
-        Назад
-    </a>
-}
-@if (Model.PageViewModel.HasNextPage)
-{
-    <a asp-action="Index"
-       asp-route-page="@(Model.PageViewModel.PageNumber + 1)"
-       class="btn btn-outline-dark">
-        Вперед
-        <i class="glyphicon glyphicon-chevron-right"></i>
-    </a>
-}
+<page-link page-model="Model.PageViewModel" page-action="Index"
+           page-url-name="@(Model.FilterViewModel.SelectedName)"
+           page-url-company="@(Model.FilterViewModel.SelectedCompany)"
+           page-url-sortorder="@(Model.SortViewModel.Current)"></page-link>
