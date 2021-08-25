@@ -26,25 +26,26 @@ namespace EFDataApp.Models
                 Up = false;
             }
 
+            Current = sortOrder;
             switch (sortOrder)
             {
                 case SortState.NameDesc:
-                    Current = NameSort = SortState.NameAsc;
+                    NameSort = SortState.NameAsc;
                     break;
                 case SortState.AgeAsc:
-                    Current = AgeSort = SortState.AgeDesc;
+                    AgeSort = SortState.AgeDesc;
                     break;
                 case SortState.AgeDesc:
-                    Current = AgeSort = SortState.AgeAsc;
+                    AgeSort = SortState.AgeAsc;
                     break;
                 case SortState.CompanyAsc:
-                    Current = CompanySort = SortState.CompanyDesc;
+                    CompanySort = SortState.CompanyDesc;
                     break;
                 case SortState.CompanyDesc:
-                    Current = CompanySort = SortState.CompanyAsc;
+                    CompanySort = SortState.CompanyAsc;
                     break;
                 default:
-                    Current = NameSort = SortState.NameDesc;
+                    NameSort = SortState.NameDesc;
                     break;
             }
         }

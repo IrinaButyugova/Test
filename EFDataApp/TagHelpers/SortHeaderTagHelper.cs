@@ -10,7 +10,6 @@ namespace EFDataApp.TagHelpers
 {
     public class SortHeaderTagHelper : TagHelper
     {
-        public SortState Property { get; set; }
         public SortState Current { get; set; }
         public string Action { get; set; }
         public bool Up { get; set; } 
@@ -34,7 +33,7 @@ namespace EFDataApp.TagHelpers
             string url = urlHelper.Action(Action, PageUrlValues);
             output.Attributes.SetAttribute("href", url);
            
-            if (Current == Property)
+            if (Current.ToString() == PageUrlValues["sortorder"].ToString())
             {
                 TagBuilder tag = new TagBuilder("i");
                 tag.AddCssClass("glyphicon");

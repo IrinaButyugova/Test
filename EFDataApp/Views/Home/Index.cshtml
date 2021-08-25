@@ -35,7 +35,7 @@
 <form method="get">
     <div class="form-inline form-group">
         <label class="control-label">Имя: </label>
-        <input name="@Model.FilterViewModel.SelectedName" class="form-control" />
+        <input name="name" value="@Model.FilterViewModel.SelectedName" class="form-control" />
 
         <label class="control-label">Компания: </label>
         <select name="company" asp-items="@Model.FilterViewModel.Companies" class="form-control"></select>
@@ -48,28 +48,28 @@
             <tr>
                 <th>
                     <sort-header action="Index" up="@Model.SortViewModel.Up"
-                                 current="@Model.SortViewModel.Current" property="@Model.SortViewModel.NameSort"
+                                 current="@Model.SortViewModel.Current"
                                  page-url-name="@(Model.FilterViewModel.SelectedName)"
-                                 page-url-company="@(Model.FilterViewModel.SelectedCompany)"
-                                 page-url-sortorder="@(Model.SortViewModel.Current)">
+                                 page-url-company="@(Model.FilterViewModel.SelectedCompany)"      
+                                 page-url-sortorder="@Model.SortViewModel.NameSort.ToString()">
                         Имя
                     </sort-header>
                 </th>
                 <th>
                     <sort-header action="Index" up="@Model.SortViewModel.Up"
-                                 current="@Model.SortViewModel.Current" property="@Model.SortViewModel.AgeSort"
+                                 current="@Model.SortViewModel.Current"
                                  page-url-name="@(Model.FilterViewModel.SelectedName)"
                                  page-url-company="@(Model.FilterViewModel.SelectedCompany)"
-                                 page-url-sortorder="@(Model.SortViewModel.Current)">
+                                 page-url-sortorder="@Model.SortViewModel.AgeSort.ToString()">
                         Возраст
                     </sort-header>
                 </th>
                 <th>
                     <sort-header action="Index" up="@Model.SortViewModel.Up"
-                                 current="@Model.SortViewModel.Current" property="@Model.SortViewModel.CompanySort"
+                                 current="@Model.SortViewModel.Current"
                                  page-url-name="@(Model.FilterViewModel.SelectedName)"
                                  page-url-company="@(Model.FilterViewModel.SelectedCompany)"
-                                 page-url-sortorder="@(Model.SortViewModel.Current)">
+                                 page-url-sortorder="@Model.SortViewModel.CompanySort.ToString()">
                         Компания
                     </sort-header>
                 </th>
@@ -79,7 +79,7 @@
                 <tr>
                     <td>@item.Name</td>
                     <td>@item.Age</td>
-                    <td>@item.Company.Name</td>
+                    <td>@item.Company?.Name</td>
                     <td>
                         <a asp-action="Details" asp-controller="Home" asp-route-id="@item.Id">Подробнее</a> |
                         <a asp-action="Edit" asp-controller="Home" asp-route-id="@item.Id">Изменить</a> |
