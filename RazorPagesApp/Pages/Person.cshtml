@@ -1,9 +1,12 @@
-﻿@page
+﻿@page "{id:int}/{name:alpha:minlength(3)}/{age:int}"
 @model PersonModel
 @{
     ViewData["Title"] = "Ввод данных";
 }
 <h2>@Model.Message</h2>
+<p>Id = @Model.Person.Id</p>
+<p>Name = @Model.Person.Name</p>
+<p>Age = @Model.Person.Age</p>
 <form method="post">
     <label for="name">Имя</label><br />
     <input type="text" name="name" id="name" /><br /><br />

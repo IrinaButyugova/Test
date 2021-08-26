@@ -8,7 +8,7 @@ namespace RazorPagesApp.Pages
     {
         public string Message { get; set; }
 
-        [BindProperty]
+        [BindProperty(SupportsGet = true)]
         public Person Person { get; set; }
         public void OnGet()
         {
