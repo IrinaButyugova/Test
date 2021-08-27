@@ -41,10 +41,18 @@ namespace WebAPIApp.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> Post(User user)
         {
-            if (user == null)
+            if (user.Age == 99)
             {
-                return BadRequest();
+                ModelState.AddModelError("Age", "Возраст не должен быть равен 99");
+            } 
+
+            if (user.Name == "admin")
+            {
+                ModelState.AddModelError("Name", "Недопустимое имя пользователя - admin");
             }
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
             db.Users.Add(user);
             await db.SaveChangesAsync();
