@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace AuthApp.Controllers
 {
@@ -15,21 +16,17 @@ namespace AuthApp.Controllers
             _logger = logger;
         }
 
-        [Authorize]
+        [Authorize(Roles = "admin, user")]
         public IActionResult Index()
         {
-            return Content(User.Identity.Name);
+            string role = User.FindFirst(x => x.Type == ClaimsIdentity.DefaultRoleClaimType).Value;
+            return Content($"ваша роль: {role}");
         }
 
-        public IActionResult Privacy()
+        [Authorize(Roles = "admin")]
+        public IActionResult About()
         {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return Content("Вход только для администратора");
         }
     }
 }

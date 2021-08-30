@@ -17,21 +17,25 @@ namespace AuthApp.Controllers
         {
             db = context;
         }
+
         [HttpGet]
         public IActionResult Login()
         {
             return View();
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginModel model)
         {
             if (ModelState.IsValid)
             {
-                User user = await db.Users.FirstOrDefaultAsync(u => u.Email == model.Email && u.Password == model.Password);
+                User user = await db.Users
+                    .Include(u => u.Role)
+                    .FirstOrDefaultAsync(u => u.Email == model.Email && u.Password == model.Password);
                 if (user != null)
                 {
-                    await Authenticate(model.Email);
+                    await Authenticate(user);
 
                     return RedirectToAction("Index", "Home");
                 }
@@ -39,11 +43,13 @@ namespace AuthApp.Controllers
             }
             return View(model);
         }
+
         [HttpGet]
         public IActionResult Register()
         {
             return View();
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterModel model)
@@ -53,10 +59,17 @@ namespace AuthApp.Controllers
                 User user = await db.Users.FirstOrDefaultAsync(u => u.Email == model.Email);
                 if (user == null)
                 {
-                    db.Users.Add(new User { Email = model.Email, Password = model.Password });
+                    user = new User { Email = model.Email, Password = model.Password };
+                    Role userRole = await db.Roles.FirstOrDefaultAsync(r => r.Name == "user");
+                    if (userRole != null)
+                    {
+                        user.Role = userRole;
+                    }   
+
+                    db.Users.Add(user);
                     await db.SaveChangesAsync();
 
-                    await Authenticate(model.Email);
+                    await Authenticate(user);
 
                     return RedirectToAction("Index", "Home");
                 }
@@ -66,11 +79,12 @@ namespace AuthApp.Controllers
             return View(model);
         }
 
-        private async Task Authenticate(string userName)
+        private async Task Authenticate(User user)
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimsIdentity.DefaultNameClaimType, userName)
+                new Claim(ClaimsIdentity.DefaultNameClaimType, user.Email),
+                new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role?.Name)
             };
             ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
 
