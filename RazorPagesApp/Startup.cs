@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using RazorPagesApp.Models;
+using RazorPagesApp.Filters;
 
 namespace RazorPagesApp
 {
@@ -27,6 +28,7 @@ namespace RazorPagesApp
         {
             string connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(connection));
+            services.AddMvc(options => options.Filters.Add(new UserAgentAsyncPageFilter()));
             services.AddRazorPages();
         }
 

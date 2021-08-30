@@ -19,9 +19,13 @@ namespace FiltersApp.Controllers
             _logger = logger;
         }
 
+        [CustomExceptionFilter]
+        [DateTimeExecutionFilter]
         [Whitespace]
         public IActionResult Index()
         {
+            int x = 0;
+            int y = 8 / x;
             return View();
         }
 
