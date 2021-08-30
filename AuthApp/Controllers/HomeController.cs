@@ -28,5 +28,23 @@ namespace AuthApp.Controllers
         {
             return Content("Вход только для администратора");
         }
+
+        [Authorize(Policy = "OnlyForLondon")]
+        public IActionResult TestCityPolicy()
+        {
+            return View();
+        }
+
+        [Authorize(Policy = "OnlyForMicrosoft")]
+        public IActionResult TestCompanyPolicy()
+        {
+            return Content("Only for Microsoft employees");
+        }
+
+        [Authorize(Policy = "AgeLimit")]
+        public IActionResult TestAgeLimitPolicy()
+        {
+            return Content("Only for ages in limit.");
+        }
     }
 }

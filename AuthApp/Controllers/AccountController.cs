@@ -59,7 +59,14 @@ namespace AuthApp.Controllers
                 User user = await db.Users.FirstOrDefaultAsync(u => u.Email == model.Email);
                 if (user == null)
                 {
-                    user = new User { Email = model.Email, Password = model.Password };
+                    user = new User
+                    {
+                        Email = model.Email,
+                        Password = model.Password,
+                        Year = model.Year,
+                        City = model.City,
+                        Company = model.Company
+                    };
                     Role userRole = await db.Roles.FirstOrDefaultAsync(r => r.Name == "user");
                     if (userRole != null)
                     {
@@ -84,7 +91,10 @@ namespace AuthApp.Controllers
             var claims = new List<Claim>
             {
                 new Claim(ClaimsIdentity.DefaultNameClaimType, user.Email),
-                new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role?.Name)
+                new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role?.Name),
+                new Claim(ClaimTypes.Locality, user.City),
+                new Claim("company", user.Company),
+                new Claim(ClaimTypes.DateOfBirth, user.Year.ToString())
             };
             ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
 

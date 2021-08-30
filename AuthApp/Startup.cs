@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -30,6 +32,22 @@ namespace AuthApp
                     options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
                     options.AccessDeniedPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
                 });
+
+            services.AddTransient<IAuthorizationHandler, AgeHandler>();
+
+            services.AddAuthorization(opts =>
+            {
+                opts.AddPolicy("OnlyForLondon", policy =>
+                {
+                    policy.RequireClaim(ClaimTypes.Locality, "Лондон", "London");
+                });
+                opts.AddPolicy("OnlyForMicrosoft", policy =>
+                {
+                    policy.RequireClaim("company", "Microsoft");
+                });
+                opts.AddPolicy("AgeLimit",
+                    policy => policy.Requirements.Add(new AgeRequirement(18)));
+        });
             services.AddControllersWithViews();
         }
 
