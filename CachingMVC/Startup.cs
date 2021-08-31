@@ -2,10 +2,12 @@ using CachingMVC.Models;
 using CachingMVC.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Linq;
 
 namespace CachingMVC
 {
@@ -25,6 +27,18 @@ namespace CachingMVC
                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddTransient<UserService>();
             services.AddMemoryCache();
+            services.AddResponseCompression(options =>
+            {
+                options.EnableForHttps = true;
+                options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[]
+    {
+        "image/svg+xml",
+        "application/atom+xml"
+    });
+                options.Providers.Add(new DeflateCompressionProvider());
+                options.Providers.Add<BrotliCompressionProvider>();
+                options.Providers.Add<GzipCompressionProvider>();
+            });
 
             services.AddControllersWithViews();
         }
@@ -32,6 +46,7 @@ namespace CachingMVC
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseResponseCompression();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
