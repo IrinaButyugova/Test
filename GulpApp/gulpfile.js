@@ -4,7 +4,9 @@ var gulp = require("gulp"),
     rimraf = require("rimraf"),
     concat = require("gulp-concat"),
     cssmin = require("gulp-cssmin"),
-    uglify = require("gulp-uglify");
+    uglify = require("gulp-uglify"),
+    less = require("gulp-less"),
+    sass = require('gulp-sass')(require('sass'));
 
 var paths = {
     webroot: "./wwwroot/"
@@ -42,3 +44,15 @@ gulp.task("min:css", function () {
 });
 
 gulp.task("min", gulp.series(["min:js", "min:css"]));
+
+gulp.task("less", function () {
+    return gulp.src('less/styles.less')
+        .pipe(less())
+        .pipe(gulp.dest(paths.webroot + '/css'))
+});
+
+gulp.task("sass", function () {
+    return gulp.src('Sass/styles2.scss')
+        .pipe(sass())
+        .pipe(gulp.dest(paths.webroot + '/css'));
+});
