@@ -15,11 +15,14 @@ namespace LocalizationApp.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IStringLocalizer<HomeController> _localizer;
+        private readonly IStringLocalizer<SharedResource> _sharedLocalizer;
 
-        public HomeController(ILogger<HomeController> logger, IStringLocalizer<HomeController> localizer)
+        public HomeController(ILogger<HomeController> logger, IStringLocalizer<HomeController> localizer,
+            IStringLocalizer<SharedResource> sharedLocalizer)
         {
             _logger = logger;
             _localizer = localizer;
+            _sharedLocalizer = sharedLocalizer;
         }
 
         public IActionResult Index()
@@ -70,6 +73,12 @@ namespace LocalizationApp.Controllers
             );
 
             return LocalRedirect(returnUrl);
+        }
+
+        public string Test()
+        {
+            string message = _sharedLocalizer["Message"];
+            return message;
         }
     }
 }
