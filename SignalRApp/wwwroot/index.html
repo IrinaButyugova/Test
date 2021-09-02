@@ -24,7 +24,7 @@
             .withUrl("/chat")
             .configureLogging(signalR.LogLevel.Information)
             .build();
-        connection.serverTimeoutInMilliseconds = 1000 * 60 * 10;
+        hubConnection.serverTimeoutInMilliseconds = 1000 * 60 * 10;
 
         let userName = '';
         hubConnection.on('Send', function (message, userName) {
@@ -41,6 +41,16 @@
 
         });
 
+        hubConnection.on('Notify', function (message) {
+
+            let notifyElem = document.createElement("b");
+            notifyElem.appendChild(document.createTextNode(message));
+            let elem = document.createElement("p");
+            elem.appendChild(notifyElem);
+            var firstElem = document.getElementById("chatroom").firstChild;
+            document.getElementById("chatroom").insertBefore(elem, firstElem);
+        });
+
         document.getElementById("loginBtn").addEventListener("click", function (e) {
             userName = document.getElementById("userName").value;
             document.getElementById("header").innerHTML = '<h3>Welcome ' + userName + '</h3>';
@@ -48,7 +58,7 @@
         
         document.getElementById("sendBtn").addEventListener("click", function (e) {
             let message = document.getElementById("message").value;
-            hubConnection.invoke("Send", message, userName);
+            hubConnection.invoke("Send", message);
         });
 
         hubConnection.start();
