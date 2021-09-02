@@ -31,6 +31,9 @@
     </header>
     <div class="container">
         <main role="main" class="pb-3">
+            <div>
+                @await Html.PartialAsync("_SelectLanguagePartial")
+            </div>
             @RenderBody()
         </main>
     </div>

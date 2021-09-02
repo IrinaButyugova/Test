@@ -29,6 +29,20 @@ namespace LocalizationApp
             services.AddControllersWithViews()
                 .AddDataAnnotationsLocalization()
                 .AddViewLocalization();
+
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                var supportedCultures = new[]
+                {
+                    new CultureInfo("en"),
+                    new CultureInfo("de"),
+                    new CultureInfo("ru")
+                };
+
+                options.DefaultRequestCulture = new RequestCulture("ru");
+                options.SupportedCultures = supportedCultures;
+                options.SupportedUICultures = supportedCultures;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,22 +59,7 @@ namespace LocalizationApp
                 app.UseHsts();
             }
 
-            var supportedCultures = new[]
-           {
-                new CultureInfo("en-US"),
-                new CultureInfo("en-GB"),
-                new CultureInfo("en"),
-                new CultureInfo("ru-RU"),
-                new CultureInfo("ru"),
-                new CultureInfo("de-DE"),
-                new CultureInfo("de")
-            };
-            app.UseRequestLocalization(new RequestLocalizationOptions
-            {
-                DefaultRequestCulture = new RequestCulture("ru-RU"),
-                SupportedCultures = supportedCultures,
-                SupportedUICultures = supportedCultures
-            });
+            app.UseRequestLocalization();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
