@@ -16,13 +16,15 @@ namespace LocalizationApp.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IStringLocalizer<HomeController> _localizer;
         private readonly IStringLocalizer<SharedResource> _sharedLocalizer;
+        private readonly IStringLocalizer<EFStringLocalizer> _efLocalizer;
 
         public HomeController(ILogger<HomeController> logger, IStringLocalizer<HomeController> localizer,
-            IStringLocalizer<SharedResource> sharedLocalizer)
+            IStringLocalizer<SharedResource> sharedLocalizer, IStringLocalizer<EFStringLocalizer> efLocalizer)
         {
             _logger = logger;
             _localizer = localizer;
             _sharedLocalizer = sharedLocalizer;
+            _efLocalizer = efLocalizer;
         }
 
         public IActionResult Index()
@@ -78,6 +80,12 @@ namespace LocalizationApp.Controllers
         public string Test()
         {
             string message = _sharedLocalizer["Message"];
+            return message;
+        }
+
+        public string EFTest()
+        {
+            string message = _efLocalizer["Message"];
             return message;
         }
     }

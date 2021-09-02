@@ -1,15 +1,13 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Localization;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
+using LocalizationApp.Models;
+using Microsoft.Extensions.Localization;
 
 namespace LocalizationApp
 {
@@ -25,9 +23,18 @@ namespace LocalizationApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            string connection = Configuration.GetConnectionString("DefaultConnection");
+            services.AddDbContext<LocalizationContext>(options => options.UseSqlServer(connection));
+
+            services.AddTransient<IStringLocalizer, EFStringLocalizer>();
+            services.AddSingleton<IStringLocalizerFactory>(new EFStringLocalizerFactory(connection));
+
             services.AddLocalization(options => options.ResourcesPath = "Resources");
             services.AddControllersWithViews()
-                .AddDataAnnotationsLocalization()
+                .AddDataAnnotationsLocalization(options => {
+                    options.DataAnnotationLocalizerProvider = (type, factory) =>
+                    factory.Create(null);
+                })
                 .AddViewLocalization();
 
             services.Configure<RequestLocalizationOptions>(options =>
