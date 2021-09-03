@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using AuthSignalRApp.Models;
+using Microsoft.AspNetCore.SignalR;
 
 namespace AuthSignalRApp
 {
@@ -26,6 +27,7 @@ namespace AuthSignalRApp
             string connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(connection));
 
+            services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                  {

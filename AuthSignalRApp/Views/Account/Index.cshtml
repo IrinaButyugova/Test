@@ -16,7 +16,8 @@
     <br />
 
     <div id="inputForm">
-        <input type="text" id="message" />
+        <input type="text" id="message" placeholder="Введите сообщение" />
+        <input type="text" id="receiver" placeholder="Введите получателя" />
         <input type="button" id="sendBtn" disabled value="Отправить" />
     </div>
 
@@ -66,7 +67,8 @@
     
     document.getElementById("sendBtn").addEventListener("click", function (e) {
         let message = document.getElementById("message").value;
-        hubConnection.invoke("Send", message, username);
+        let to = document.getElementById("receiver").value;
+        hubConnection.invoke("Send", message, to);
     });
 
     </script>
