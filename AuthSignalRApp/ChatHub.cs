@@ -11,11 +11,5 @@ namespace AuthSignalRApp
         {
             await Clients.All.SendAsync("Receive", message, userName);
         }
-
-        [Authorize(Roles = "admin")]
-        public async Task Notify(string message, string userName)
-        {
-            await Clients.All.SendAsync("Receive", message, userName);
-        }
     }
 }
