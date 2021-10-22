@@ -1,0 +1,39 @@
+﻿<head>
+    <meta charset="utf-8" />
+    <title>Speed test</title>
+</head>
+<body>
+    <input id="downloadBtn" type="button" value="Загрузить" />
+    <div id="downloadSpeed"></div>
+</body>
+
+<script>
+    document.getElementById("downloadBtn").addEventListener("click", function (e) {
+        let startTime, endTime;
+        let speeds = [];
+
+        let request = new XMLHttpRequest();
+        request.open("GET", "/download", true);
+        request.addEventListener("load", function () {
+            endTime = (new Date()).getTime();
+            let duration = (endTime - startTime) / 1000;
+            let length = request.getResponseHeader("content-length");
+            let speed = (length / duration);
+            speeds.push(speed);
+
+            if (speeds.length < 5) {
+                request.open("GET", "/download", true);
+                request.send();
+                startTime = (new Date()).getTime();
+            }
+            else {
+                let resultSpeed = (speeds.reduce((a, b) => (a + b)) / speeds.length).toFixed(2);
+                let downloadSpeedElem = document.getElementById("downloadSpeed");
+                downloadSpeedElem.textContent = "Download speed: " + resultSpeed + " Bps";
+            }
+        });
+        request.send();
+        startTime = (new Date()).getTime();
+    });
+
+</script>
