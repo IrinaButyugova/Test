@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using SpeedTest.Models;
 using System.Diagnostics;
@@ -9,10 +10,12 @@ namespace SpeedTest.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IConfiguration _configuration;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IConfiguration configuration)
         {
             _logger = logger;
+            _configuration = configuration;
         }
 
         public IActionResult Index()
@@ -20,19 +23,19 @@ namespace SpeedTest.Controllers
            return View();
         }
 
-        private async Task SendFileAsync()
-        {
-            byte[] fileContent = System.IO.File.ReadAllBytes("c:/git/jquery1.txt");
-            var fileLength = fileContent.Length;
-            HttpContext.Response.Headers.Add("Content-Length", fileLength.ToString());
-            await HttpContext.Response.Body.WriteAsync(fileContent, 0, fileLength);
-        }
-
         [HttpGet("/download")]
         public IActionResult Download()
         {
             SendFileAsync().GetAwaiter().GetResult();
             return Ok();
+        }
+
+        private async Task SendFileAsync()
+        {
+            byte[] fileContent = System.IO.File.ReadAllBytes(_configuration.GetValue<string>("FilePath"));
+            var fileLength = fileContent.Length;
+            HttpContext.Response.Headers.Add("Content-Length", fileLength.ToString());
+            await HttpContext.Response.Body.WriteAsync(fileContent, 0, fileLength);
         }
 
         [HttpPost("/upload")]
