@@ -35,6 +35,12 @@ namespace SpeedTest.Controllers
             return Ok();
         }
 
+        [HttpPost("/upload")]
+        public IActionResult Upload([FromBody]string message)
+        {
+            return Ok();
+        }
+
         public IActionResult Privacy()
         {
             return View();
